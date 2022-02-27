@@ -20,8 +20,8 @@ class ReclamationType extends AbstractType
             ->add('enregistrer',SubmitType::class)
             ->add('type', ChoiceType::class, [
                 'choices'  => [
-                    'Materiel'=>1,
-                    'logiciel' => 2,
+                    'Materiel'=>'Materiel',
+                    'logiciel' => 'logiciel',
                     
                 ],
             ])

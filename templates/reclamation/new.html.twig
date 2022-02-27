@@ -18,7 +18,8 @@
                     <div class="form-group">
 
                         {{ form_label(form.sujet_rec,"sujet_rec") }}
-                            
+                        {{ form_errors(form.sujet_rec) }}
+
                         {{ form_widget(form.sujet_rec , {'attr':{'class':'form-control p_input'}}) }}
                     </div>
                     <div class="form-group">

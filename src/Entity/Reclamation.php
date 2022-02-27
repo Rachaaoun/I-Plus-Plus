@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\ReclamationRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -22,8 +24,7 @@ class Reclamation
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank(message="le champ est requis")
-     * @Assert\Length(min=10,messageMin="")
-     */
+    */
     private $sujet_rec;
       /**
      * @ORM\Column(type="string", length=255)
@@ -44,6 +45,7 @@ class Reclamation
      * @ORM\Column(type="integer")
      */
     private $user_id;
+
 
     public function getId(): ?int
     {
@@ -95,4 +97,7 @@ class Reclamation
 
         return $this;
     }
+
+   
+
 }

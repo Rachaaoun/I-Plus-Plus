@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -28,6 +30,16 @@ class TypeReclamation
      */
     private $niveau;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Reclamation::class, mappedBy="type_rec")
+     */
+    private $reclamations;
+
+    public function __construct()
+    {
+        $this->reclamations = new ArrayCollection();
+    }
+
     public function getIdTypeRecla(): ?int
     {
         return $this->idTypeRecla;
@@ -41,6 +53,33 @@ class TypeReclamation
     public function setNiveau(string $niveau): self
     {
         $this->niveau = $niveau;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Reclamation[]
+     */
+    public function getReclamations(): Collection
+    {
+        return $this->reclamations;
+    }
+
+    public function addReclamation(Reclamation $reclamation): self
+    {
+        if (!$this->reclamations->contains($reclamation)) {
+            $this->reclamations[] = $reclamation;
+            $reclamation->addTypeRec($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReclamation(Reclamation $reclamation): self
+    {
+        if ($this->reclamations->removeElement($reclamation)) {
+            $reclamation->removeTypeRec($this);
+        }
 
         return $this;
     }
