@@ -26,11 +26,7 @@ class Reclamation
      * @Assert\NotBlank(message="le champ est requis")
     */
     private $sujet_rec;
-      /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(message="le champ est requis")
-     */
-    private $type;
+
 
     /**
      * @ORM\Column(type="integer")
@@ -46,6 +42,11 @@ class Reclamation
      */
     private $user_id;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Typereclamations::class, inversedBy="reclamations")
+     */
+    private $typereclamations;
+
 
     public function getId(): ?int
     {
@@ -56,10 +57,7 @@ class Reclamation
     {
         return $this->sujet_rec;
     }
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
+ 
 
     public function setSujetRec(string $sujet_rec): self
     {
@@ -67,12 +65,7 @@ class Reclamation
 
         return $this;
     }
-    public function settype(string $type): self
-    {
-        $this->type = $type;
 
-        return $this;
-    }
 
     public function getNiveau(): ?string
     {
@@ -94,6 +87,18 @@ class Reclamation
     public function setUserId(int $user_id): self
     {
         $this->user_id = $user_id;
+
+        return $this;
+    }
+
+    public function getTypereclamations(): ?Typereclamations
+    {
+        return $this->typereclamations;
+    }
+
+    public function setTypereclamations(?Typereclamations $typereclamations): self
+    {
+        $this->typereclamations = $typereclamations;
 
         return $this;
     }

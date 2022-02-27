@@ -5,6 +5,8 @@
 {% block body %}
     <h1>Reclamation index</h1>
 
+
+    <a type="submit" href="{{ path('app_typereclamations_new') }}">Add reclamation Type</a>
     <table class="table">
         <thead>
             <tr>
@@ -12,6 +14,7 @@
                 <th>Sujet_rec</th>
                 <th>Niveau</th>
                 <th>User_id</th>
+                <th>Type</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -22,6 +25,7 @@
                 <td>{{ reclamation.sujetRec }}</td>
                 <td>{{ reclamation.niveau }}</td>
                 <td>{{ reclamation.userId }}</td>
+                 <td>{{ reclamation.typereclamations }}</td>
                 <td>
                     <a href="{{ path('reclamation_show', {'id': reclamation.id}) }}">show</a>
                     <a href="{{ path('reclamation_edit', {'id': reclamation.id}) }}">edit</a>

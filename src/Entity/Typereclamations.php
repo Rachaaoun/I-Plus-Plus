@@ -2,36 +2,30 @@
 
 namespace App\Entity;
 
+use App\Repository\TypereclamationsRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * TypeReclamation
- *
- * @ORM\Table(name="type_reclamation")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass=TypereclamationsRepository::class)
  */
-class TypeReclamation
+class Typereclamations
 {
     /**
-     * @var int
-     *
-     * @ORM\Column(name="id_type_recla", type="integer", nullable=false)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="IDENTITY")
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
      */
-    private $idTypeRecla;
+    private $id;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="niveau", type="string", length=60, nullable=false)
+     * @ORM\Column(type="string", length=255)
      */
     private $niveau;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Reclamation::class, mappedBy="type_rec")
+     * @ORM\OneToMany(targetEntity=Reclamation::class, mappedBy="typereclamations")
      */
     private $reclamations;
 
@@ -40,9 +34,9 @@ class TypeReclamation
         $this->reclamations = new ArrayCollection();
     }
 
-    public function getIdTypeRecla(): ?int
+    public function getId(): ?int
     {
-        return $this->idTypeRecla;
+        return $this->id;
     }
 
     public function getNiveau(): ?string
@@ -58,7 +52,7 @@ class TypeReclamation
     }
 
     /**
-     * @return Collection|Reclamation[]
+     * @return Collection<int, Reclamation>
      */
     public function getReclamations(): Collection
     {
@@ -69,7 +63,7 @@ class TypeReclamation
     {
         if (!$this->reclamations->contains($reclamation)) {
             $this->reclamations[] = $reclamation;
-            $reclamation->addTypeRec($this);
+            $reclamation->setTypereclamations($this);
         }
 
         return $this;
@@ -78,11 +72,16 @@ class TypeReclamation
     public function removeReclamation(Reclamation $reclamation): self
     {
         if ($this->reclamations->removeElement($reclamation)) {
-            $reclamation->removeTypeRec($this);
+            // set the owning side to null (unless already changed)
+            if ($reclamation->getTypereclamations() === $this) {
+                $reclamation->setTypereclamations(null);
+            }
         }
 
         return $this;
     }
 
-
+    public function __toString(){
+        return $this->niveau;
+    }
 }

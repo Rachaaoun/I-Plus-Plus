@@ -18,13 +18,7 @@ class ReclamationType extends AbstractType
             ->add('sujet_rec')
             ->add('user_id')
             ->add('enregistrer',SubmitType::class)
-            ->add('type', ChoiceType::class, [
-                'choices'  => [
-                    'Materiel'=>'Materiel',
-                    'logiciel' => 'logiciel',
-                    
-                ],
-            ])
+            ->add('typereclamations')
             ->add('niveau', ChoiceType::class, [
                 'choices'  => [
                     'faible'=>0,
