@@ -17,6 +17,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use \Twilio\Rest\Client;
 
+
+
 /**
  * @Route("/reclamation")
  */
@@ -25,14 +27,7 @@ class ReclamationController extends AbstractController
 
     private $twilio;
 
-    public function __construct(Client $twilio) {
-        $this->twilio = $twilio;
-       
-      }
-      protected function configure() {
-        $this->setName('myapp:sms')
-             ->setDescription('Send reminder text message');
-      }
+    
 
 
     /**
@@ -48,7 +43,7 @@ class ReclamationController extends AbstractController
     /**
      * @Route("/new", name="reclamation_new", methods={"GET", "POST"})
      */
-    public function new(Request $request, EntityManagerInterface $entityManager, Client $twilioClient): Response
+    public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $reclamation = new Reclamation();
         $form = $this->createForm(ReclamationType::class, $reclamation);
@@ -58,6 +53,29 @@ class ReclamationController extends AbstractController
             $entityManager->persist($reclamation);
             $entityManager->flush();
 
+
+            $sid = "ACc2758e503eb8d85575ad23a0fa4bcb15"; // Your Account SID from www.twilio.com/console
+            $token = "722177e63bd8ec3b0af93eafb21126da"; // Your Auth Token from www.twilio.com/console
+            
+            $client = new Client($sid, $token);
+             $message = $client->messages 
+            ->create("+21625058640", // to 
+                     array(  
+                         "messagingServiceSid" => "MG4fe1ea3899ac9a3000632f5fc6e53417",      
+                         "body" => "You reclamation was sended to the admin " 
+                     ) 
+            ); 
+            print($message->sid);
+            // $sid = getenv("TWILIO_ACCOUNT_SID");
+            // $token = getenv("TWILIO_AUTH_TOKEN");
+            // $twilio = new Client($sid, $token);
+
+            // $message = $twilio->messages
+            //                 ->create("whatsapp:+21658307625", // to
+            //                         ["from" => "+21658307625", "body" => "Hi there"]
+            //                 );
+
+           // print($message->sid);
         //     $sid = getenv("TWILIO_ACCOUNT_SID");
         // $token = getenv("TWILIO_AUTH_TOKEN");
         // $client = new Client('AC43cd140f0a451f236314dc2b20e42d9e', 'ac19acdcb6ec7f981a1c9ccc9b38ff6a');
