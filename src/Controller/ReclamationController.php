@@ -54,14 +54,14 @@ class ReclamationController extends AbstractController
             $entityManager->flush();
 
 
-            $sid = "ACc2758e503eb8d85575ad23a0fa4bcb15"; // Your Account SID from www.twilio.com/console
-            $token = "722177e63bd8ec3b0af93eafb21126da"; // Your Auth Token from www.twilio.com/console
+            $sid = "AC1a089fe9379ec0c1d0bce40ea126d0fd"; // Your Account SID from www.twilio.com/console
+            $token = "bc44b2e227ae0534c5c6d5eb8a1cdeff"; // Your Auth Token from www.twilio.com/console
             
             $client = new Client($sid, $token);
              $message = $client->messages 
             ->create("+21625058640", // to 
                      array(  
-                         "messagingServiceSid" => "MG4fe1ea3899ac9a3000632f5fc6e53417",      
+                         "messagingServiceSid" => "MG2ce7c477daa3dd9b0284211cd90c32cf",      
                          "body" => "You reclamation was sended to the admin " 
                      ) 
             ); 
