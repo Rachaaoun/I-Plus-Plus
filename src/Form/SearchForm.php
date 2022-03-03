@@ -10,7 +10,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use App\Repository\ProductsRepository;
+use App\Repository\ReclamationRepository;
 
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
@@ -25,7 +25,7 @@ class SearchForm extends AbstractType
                 'data_class' => SearchData::class,
                 'method'     => 'GET',
                 'csrf_protection' => false,
-                'user'=>null
+                'reclamation'=>null
              
 
         ]);
@@ -46,14 +46,14 @@ class SearchForm extends AbstractType
             'label' => false,
             'required' => false,
             'attr' => [
-                'placeholder' => 'Nom'
+                'placeholder' => 'Sujet'
             ]
         ])
         ->add('p', TextType::class, [
             'label' => false,
             'required' => false,
             'attr' => [
-                'placeholder' => 'Prenom'
+                'placeholder' => 'Niveau'
             ]
         ])
 

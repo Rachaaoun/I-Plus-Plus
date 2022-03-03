@@ -6,6 +6,8 @@
     <h1>Reclamation index</h1>
 
 
+ {% include 'reclamation/_filtre.html.twig' with {form : form} only %}
+ 
     <a type="submit" href="{{ path('app_typereclamations_new') }}">Add reclamation Type</a>
     <table class="table">
         <thead>

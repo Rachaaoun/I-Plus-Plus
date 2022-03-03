@@ -6,6 +6,8 @@ use App\Entity\Reclamation;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
+use App\Data\SearchData;
+
 /**
  * @method Reclamation|null find($id, $lockMode = null, $lockVersion = null)
  * @method Reclamation|null findOneBy(array $criteria, array $orderBy = null)
@@ -31,7 +33,7 @@ class ReclamationRepository extends ServiceEntityRepository
         if ($search->q || $search->p ) {
             $query =
                 $query
-                    ->where('u.sujetRec LIKE :q')
+                    ->where('u.sujet_rec LIKE :q')
                     ->setParameter('q','%' .$search->q .'%')
                     ->andWhere('u.niveau LIKE :p')
                     ->setParameter('p','%' .$search->p .'%');

@@ -16,6 +16,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use \Twilio\Rest\Client;
+use App\Data\SearchData;
+use App\Form\SearchForm;
 
 
 
@@ -33,10 +35,15 @@ class ReclamationController extends AbstractController
     /**
      * @Route("/", name="reclamation_index", methods={"GET"})
      */
-    public function index(ReclamationRepository $reclamationRepository): Response
+    public function index(ReclamationRepository $reclamationRepository,Request $request): Response
     {
+        $data = new SearchData();
+        $form = $this->createForm(SearchForm::class, $data);
+        $form->handleRequest($request);
+        $reclamation= $reclamationRepository->findSearch($data);
         return $this->render('reclamation/index.html.twig', [
-            'reclamations' => $reclamationRepository->findAll(),
+            'reclamations' => $reclamation,
+            'form' => $form->createView(),
         ]);
     }
 
