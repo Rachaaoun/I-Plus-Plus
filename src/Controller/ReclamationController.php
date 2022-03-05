@@ -62,7 +62,7 @@ class ReclamationController extends AbstractController
 
 
             $sid = "AC1a089fe9379ec0c1d0bce40ea126d0fd"; // Your Account SID from www.twilio.com/console
-            $token = "bc44b2e227ae0534c5c6d5eb8a1cdeff"; // Your Auth Token from www.twilio.com/console
+            $token = "795132b6a9d6ec3a1ed3b610a548dd84"; // Your Auth Token from www.twilio.com/console
             
             $client = new Client($sid, $token);
              $message = $client->messages 
