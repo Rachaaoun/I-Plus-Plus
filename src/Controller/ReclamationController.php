@@ -23,6 +23,8 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\SerializerInterface;
 use \Twilio\Rest\Client;
+use App\Data\SearchData;
+use App\Form\SearchForm;
 
 
 
@@ -43,10 +45,15 @@ class ReclamationController extends AbstractController
     /**
      * @Route("/", name="reclamation_index", methods={"GET"})
      */
-    public function index(ReclamationRepository $reclamationRepository): Response
+    public function index(ReclamationRepository $reclamationRepository,Request $request): Response
     {
+        $data = new SearchData();
+        $form = $this->createForm(SearchForm::class, $data);
+        $form->handleRequest($request);
+        $reclamation= $reclamationRepository->findSearch($data);
         return $this->render('reclamation/index.html.twig', [
-            'reclamations' => $reclamationRepository->findAll(),
+            'reclamations' => $reclamation,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -64,14 +71,14 @@ class ReclamationController extends AbstractController
             $entityManager->flush();
 
 
-            $sid = "ACc2758e503eb8d85575ad23a0fa4bcb15"; // Your Account SID from www.twilio.com/console
-            $token = "722177e63bd8ec3b0af93eafb21126da"; // Your Auth Token from www.twilio.com/console
+            $sid = "AC1a089fe9379ec0c1d0bce40ea126d0fd"; // Your Account SID from www.twilio.com/console
+            $token = "795132b6a9d6ec3a1ed3b610a548dd84"; // Your Auth Token from www.twilio.com/console
             
             $client = new Client($sid, $token);
              $message = $client->messages 
             ->create("+21625058640", // to 
                      array(  
-                         "messagingServiceSid" => "MG4fe1ea3899ac9a3000632f5fc6e53417",      
+                         "messagingServiceSid" => "MG2ce7c477daa3dd9b0284211cd90c32cf",      
                          "body" => "You reclamation was sended to the admin " 
                      ) 
             ); 
