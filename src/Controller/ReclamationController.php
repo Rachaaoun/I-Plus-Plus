@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Reclamation;
+use App\Entity\Typereclamations;
 use App\Form\ReclamationType;
 use App\Repository\ReclamationRepository;
+use App\Repository\TypereclamationsRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,6 +17,11 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\SerializerInterface;
 use \Twilio\Rest\Client;
 
 
@@ -24,6 +31,9 @@ use \Twilio\Rest\Client;
  */
 class ReclamationController extends AbstractController 
 {
+
+    
+    const ATTRIBUTES_TO_SERIALIZE =['id','userId','sujetRec','niveau'];
 
     private $twilio;
 
@@ -65,6 +75,9 @@ class ReclamationController extends AbstractController
                          "body" => "You reclamation was sended to the admin " 
                      ) 
             ); 
+
+            $client->http->curlopts[CURLOPT_SSL_VERIFYPEER]=false;
++			$client->http->curlopts[CURLOPT_SSL_VERIFYHOST]=2;
             print($message->sid);
             // $sid = getenv("TWILIO_ACCOUNT_SID");
             // $token = getenv("TWILIO_AUTH_TOKEN");
@@ -149,4 +162,116 @@ class ReclamationController extends AbstractController
 
         return $this->redirectToRoute('reclamation_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    /**
+     * @Route("/reclamation/list")
+     * @param ReclamationRepository $repo
+     */
+    public function getList(ReclamationRepository $repo,SerializerInterface $serializer):Response{
+     
+        $reclamations=$repo->findAll();
+        $json=$serializer->serialize($reclamations,'json', ['groups' => ['reclamation']]);
+
+
+        return $this->json(['reclamation'=>$reclamations],Response::HTTP_OK,[],[
+            'attributes'=>self::ATTRIBUTES_TO_SERIALIZE
+        ]);
+
+
+
+    }
+    /**
+     * @Route("/modifier/reclamation/{id}" , name="rec_edit" ,  methods={"GET", "POST"}, requirements={"id":"\d+"})
+     */
+    public function reclamationModif(TypereclamationsRepository $repotype,Request $request,SerializerInterface $serializer,$id,ReclamationRepository $repo)
+    {
+        $reclamation=$repo->findOneById($id);
+        $sujet=$request->query->get('sujet');
+        $niveau=$request->query->get('niveau');
+        
+       
+        $em=$this->getDoctrine()->getManager();
+      
+       $reclamation->setSujetRec($sujet);
+       $reclamation->setNiveau($niveau);
+       $reclamation->setUserId(1);
+       $type=$repotype->findOneById(1);
+       $reclamation->setTypereclamations($type);
+        
+        $em->persist($reclamation);
+        $em->flush();
+        $json = $serializer->serialize(
+            $reclamation,
+            'json',
+            ['groups' => 'reclamation']
+        );
+       // $serializer=new Serializer([new ObjectNormalizer()]);
+       // $formatted=$serializer->normalize($reclamation);
+        return new JsonResponse($json);
+    }
+
+
+    /**
+     * @Route("/reclamation/delete", name="supprimer_rec")
+     */
+    public function supprimerReclamation(Request $request, ReclamationRepository $repo): Response
+    {
+
+        $id =$request->get("id");
+        $em=$this->getDoctrine()->getManager();
+
+     $d=   $repo->find($id);
+
+        if($d != null){
+            $em->remove($d);
+            $em->flush();
+            $serializer=new Serializer([new ObjectNormalizer()]);
+            $formatted=$serializer->normalize("reclamation a eté supprimeé");
+            return new JsonResponse($formatted);
+        }
+
+       return  new JsonResponse("Id Invalide");
+    }
+
+     /**
+     * @Route("/AddReclamation/json", name="AddReclamation")
+     */
+    public function AddReclamationJSON(Request $request,NormalizerInterface $Normalizer,TypereclamationsRepository $repo)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $reclamation = new Reclamation();
+        $idType=$request->get('idType');
+        $Type = $repo->findOneById($idType);
+        $reclamation->setTypereclamations($Type);
+        $reclamation->setSujetRec($request->get('sujet'));
+        $reclamation->setNiveau($request->get('niveau'));
+        $reclamation->setUserId(1);
+       
+        $em->persist($reclamation);
+        $em->flush();
+
+        $jsonContent= $Normalizer->normalize($reclamation,'json',['groups'=>"reclamation:read"]);
+        return new Response(json_encode($jsonContent));;
+    }
+
+    
+     /**
+     * @Route("/AllReclamation/type/json")
+     * @param TypeReclamationRepository $repo
+     */
+    public function getReclamationListByType(TypereclamationsRepository $repo,ReclamationRepository $reclamationRepository,Request $request,SerializerInterface $serializer):Response{
+     
+        $id=$request->query->get('id');
+        $type=$repo->findOneById($id);
+        $typeId=$type->getId();
+        $reclamations=$type->getReclamations();
+        $json=$serializer->serialize($reclamations,'json', ['groups' => ['reclamation']]);
+
+
+        return $this->json(['reclamation'=>$reclamations],Response::HTTP_OK,[],[
+            'attributes'=>self::ATTRIBUTES_TO_SERIALIZE
+        ]);
+
+}
+
 }
